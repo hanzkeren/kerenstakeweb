@@ -1,17 +1,18 @@
-# AGENT.md (v6 — Production Ready)
+# AGENT.md (v7 — Project-adapted, Production Ready)
 
-Versi ini adalah penyempurnaan penuh dari seluruh struktur v1–v5 dengan optimalisasi performa, keamanan, dan kejelasan eksekusi untuk digunakan di runtime Codex/CLI Agent.
+Dokumen ini merekonsolidasi profil agent (v6) dengan seluruh instruksi, keputusan, dan preferensi desain yang terbentuk selama iterasi terkini. Fokusnya: hasil stabil, responsif, konsisten dengan gaya retro‑futuristic/abstract‑tech, dan eksekusi cepat sesuai perintah Hanz.
 
 ---
 
 ## Metadata
 ```yaml
-version: 6.0
+version: 7.0
 active_sections:
   - core_logic
   - interpreter
   - self_learning
   - safety
+  - project_context
 ```
 
 ---
@@ -24,7 +25,7 @@ Agent ini dirancang untuk:
 - Menjalankan auto-learning untuk efisiensi berkelanjutan.
 
 Lingkup proyek:
-- Framework: **Next.js 14+ (App Router, TS)**
+- Framework: **Next.js 14+/15+ (App Router, TS)**
 - Styling: **Tailwind CSS**, **shadcn/ui**
 - Behavior: **framer-motion**, **lucide-react**
 - Manajer paket: **pnpm**
@@ -42,6 +43,8 @@ Ignore:
 - /node_modules
 - /config
 - /agent
+
+Catatan: File di parent root (mis. `../AGENT.md`) boleh diubah bila diminta eksplisit.
 ```
 
 ---
@@ -99,6 +102,7 @@ Error yang dapat diperbaiki otomatis:
 - **Build Error** → jalankan lint + typecheck
 - **CLS tinggi** → tambahkan ukuran eksplisit untuk gambar & font preload
 - **Overflow** → ubah menjadi `max-w-full` dan `overflow-hidden`
+- **Module not found (opsional)** → gunakan import dinamis (lazy) untuk modul opsional, atau berikan instruksi `pnpm install` yang jelas.
 
 ---
 
@@ -109,6 +113,8 @@ Error yang dapat diperbaiki otomatis:
 | SIMPLIFY | Kata “simple/minimal” | Buat versi sederhana dan stabil |
 | CLEANUP | Kata “rapikan/rata” | Normalisasi spacing & alignment |
 | TONE | Kata “corporate/validator” | Ubah tone copy sesuai konteks |
+
+Jika pengguna menggunakan bahasa keras/urgens: jalankan cepat, minimal konfirmasi, tetap aman.
 
 ---
 
@@ -192,7 +198,7 @@ Jaga performa, struktur, dan konsistensi hasil.
 ---
 
 **Status:**
-AGENT.md v6 siap digunakan untuk runtime Codex/CLI dengan performa cepat, keamanan tinggi, dan konteks adaptif berbasis gaya Hanz.
+AGENT.md v7 siap digunakan untuk runtime Codex/CLI dengan performa cepat, keamanan tinggi, dan konteks adaptif berbasis gaya Hanz.
 
 
 
@@ -335,4 +341,64 @@ function formatResponse(result) {
   return `⚠️ Gagal: ${result.msg}`
 }
 ```
+
+---
+
+## 14. Project Context (Ringkasan Instruksi & Keputusan)
+
+Bagian ini mengikat aturan konteks proyek agar agent konsisten mengeksekusi permintaan Hanz.
+
+### 14.1 Tema & Gaya Visual
+- Default: dark theme aktif; gunakan token `bg-background` dan `text-foreground` (bukan hitam/putih murni) untuk kenyamanan baca.
+- Aksen neon lembut: `--ring`/`--primary` prefer cyan `#00E5FF` (tidak over-saturated).
+- Font: **Plus Jakarta Sans** via next/font, variable `--font-geist-sans`.
+- Hindari overlay berat global; gunakan aksen halus (striped pattern, gradient tipis kanan) yang responsif.
+
+### 14.2 Hero & Badge
+- Background hero boleh kosong/transparan; aksen striped halus boleh dipakai (mask radial).
+- Badge transparan, border subtle; animasi light bergerak bolak‑balik + wobble ringan.
+- Cloud: jika diperlukan, tint neon cyan; jika tidak, hilangkan. Masking/overlay jangan ganggu teks/CTA.
+
+### 14.3 Beam (Animated Beams)
+- Circle: gelap seragam `bg-neutral-950` + `border-white/10`; beri glow neon saat hover (shadow + inner ring).
+- Logo: gunakan chain‑registry (raw.githubusercontent) bila perlu; whitelist domain di `next.config.ts`. Pusat bisa gunakan logo lokal (prefer @2x atau SVG) agar tajam.
+- Beam gradient: cyan → violet untuk menyatu dengan tema.
+
+### 14.4 TrustedBy
+- Animasi marquee harus mulus, tanpa “reset”, gunakan rAF scroller atau util `.animate-marquee` dengan `--duration` & `--gap`. Responsif dan tidak mem-bypass reduce‑motion kecuali diminta.
+
+### 14.5 Notifications (Animated List) & Cosmos Live Feed
+- Copy bertema validator/network; chain UPPERCASE + bold di deskripsi.
+- Live feed SSE dari cosmos.directory (governance/upgrade saja):
+  - Events: `proposal`, `proposal_status`, `proposal_ending_soon`, `upgrade`.
+  - Dedupe per ID dan emit satu notifikasi per interval (acak chain) agar animasi konsisten.
+  - Sanitasi: hilangkan emoji/URL/markdown images; limit judul+deskripsi ≤ 105 karakter.
+- Tampilkan badge “Live” + status dot; animasi masuk konsisten.
+
+### 14.6 Section “Our Networks” (Showcase)
+- Heading gradient—kontras kuat tapi tetap readable; jangan lebih besar dari judul Hero.
+- Gambar di atas heading diisi gradient melalui **mask** (pakai SVG bila ada untuk ketajaman). Terapkan fade 100%→0% ke bawah via mask linear‑gradient.
+- Posisi gambar overlap heading via negative margin responsif. Pastikan rapi di mobile (padding `px-4`, `-mb` menyesuaikan breakpoint).
+- Aksen sisi kanan: gradient gelap tipis, responsif (w-16 → w-32 di desktop).
+- Copy bawah heading: sesuaikan konteks jaringan validator (mis. “Networks we validate and secure across the Interchain.”).
+
+### 14.7 Cobe Globe
+- Jika dipakai, gunakan import dinamis (safe fallback bila modul belum terinstall) dan hindari react-spring. Jika user minta aktifkan, sarankan `pnpm install` untuk modul `cobe`.
+
+### 14.8 Responsiveness
+- Gunakan ukuran responsif (`sm/ md/ lg`) untuk teks/kontainer; di mobile, hindari konten menempel tepi (gunakan `px-4`).
+- Pastikan dekorasi `pointer-events-none` dan `z-index` tidak ganggu interaksi.
+
+### 14.9 Build & Kualitas
+- Jika error modul terjadi, gunakan import dinamis dan sediakan langkah `pnpm install`. Jangan memaksa dependensi yang tidak kritis.
+- Utamakan aset SVG / @2x untuk ketajaman; hindari pixelation.
+
+---
+
+## 15. Eksekusi Cepat (Cheatsheet)
+- “Circle beam solid, bukan transparan” → `bg-neutral-950 border-white/10` + hover glow.
+- “Ganti logo pusat beam” → update `<Image src>` pusat; pakai `sizes` dan `priority` + @2x.
+- “Heading Our Networks lebih kontras” → naikkan gradient to neutral‑700/white/90 + stroke 0.25px + drop‑shadow.
+- “Gambar di atas heading isi gradient” → gunakan `mask-image: url(...)` + `bg-gradient-to-*` pada wrapper; tambahkan fade linear untuk 100%→0%.
+- “Live feed jangan spam” → 1 event/interval, random chain, dedupe by ID, sanitize text.
 
